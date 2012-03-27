@@ -15,6 +15,7 @@ TIPS: encode from MP3 to OGG
 TODO: playlist
 """
 
+import os
 import sys
 import array
 try:
@@ -38,7 +39,7 @@ class DynamicSound(object):
         self._sound = [None] * 4
         self._channel = [None] * 4
         self._capture = cv.CaptureFromCAM(-1)
-        pygame.mixer.init(channels=2) # 1 <= channels <= 2
+        pygame.mixer.init(frequency=44100, channels=2, buffer=2048)
         self.capturing = False
         self._weight = [0.0] * 4
         self.cone = None
@@ -58,6 +59,9 @@ class DynamicSound(object):
                        soundupleft, soundupright, sounddownleft, sounddownright
         """
         for i in xrange(4):
+            if not os.path.isfile(sounds[i]):
+                print("warning: not a file: "+sounds[i])
+                return
             # load all in memory, slow!
             self._sound[i] = pygame.mixer.Sound(sounds[i])
         print("debug: 4 sounds loaded")
